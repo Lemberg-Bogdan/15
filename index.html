@@ -1,203 +1,202 @@
 <html>
-	<head>
+    <head>
+        <style type="text/css">
+            body {
+                background-color: #f5ecec;
+            }
 
-		<style type="text/css">
-			body {
-				background-color: #f5ecec;
-			}
+            .game {
+                width: 356px;
+                margin: auto;
+            }
 
-			.game {
-				width: 356px;
-				margin: auto;
-			}
+            .item-container {
+                border: 1px solid #000;
+                width: 75px;
+                height: 75px;
+                padding: 5px;
+                float: left;
+                margin: 1px;
 
-			.item-container {
-				border: 1px solid #000;
-				width: 75px;
-			    height: 75px;
-			    padding: 5px;
-			    float: left;
-			    margin: 1px;
-			    
-			}
+            }
 
-			.item {
-				background-color: #f5bf88;
-				display: inline-block;
-				width: 75px;
-			    height: 75px;
-			    text-align: center;
-			    line-height: 75px;
-    			vertical-align: middle;
-    			cursor: pointer;
-    			border-radius: 5px;
-    			font-size: 35px;
-			}
+            .item {
+                background-color: #f5bf88;
+                display: inline-block;
+                width: 75px;
+                height: 75px;
+                text-align: center;
+                line-height: 75px;
+                vertical-align: middle;
+                cursor: pointer;
+                border-radius: 5px;
+                font-size: 35px;
+            }
 
-			.clear {
-				clear: left;
-			}
+            .clear {
+                clear: left;
+            }
 
-			.restart {
-				clear: both;
-			    display: block;
-			    margin: auto;
-			    width: 110px;
-			    height: 35px;
-			    font-size: 15px;
-			}
+            .restart {
+                clear: both;
+                display: block;
+                margin: auto;
+                width: 110px;
+                height: 35px;
+                font-size: 15px;
+            }
 
-			.timer {
-				clear: both;
-			    display: block;
-			    margin: auto;
-			    width: 110px;
-			    height: 35px;
-			    font-size: 20px;
-			    text-align: center;
-			    line-height: 35px;
-    			vertical-align: middle;
-			}
-		</style>
-	</head>
+            .timer {
+                clear: both;
+                display: block;
+                margin: auto;
+                width: 110px;
+                height: 35px;
+                font-size: 20px;
+                text-align: center;
+                line-height: 35px;
+                vertical-align: middle;
+            }
+        </style>
+    </head>
 
-	<body>
-		<div class="game"></div>
-		<button class="restart">Start again</button>
-		<div class="timer">
-			<label id="minutes">00</label>:<label id="seconds">00</label>
-		</div>
+    <body>
+        <div class="game"></div>
+        <button class="restart">Start again</button>
+        <div class="timer">
+            <label id="minutes">00</label>:<label id="seconds">00</label>
+        </div>
 
-		<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
-		<script type="text/javascript">
-			var minutesLabel = document.getElementById("minutes");
-			var secondsLabel = document.getElementById("seconds");
-			var totalSeconds = 0;
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+        <script type="text/javascript">
+            var minutesLabel = document.getElementById("minutes");
+            var secondsLabel = document.getElementById("seconds");
+            var totalSeconds = 0;
 
-			/**
-			 * Shuffles array in place.
-			 * @param {Array} a items An array containing the items.
-			 */
-			function shuffle(a) {
-			    var j, x, i;
-			    for (i = a.length - 1; i > 0; i--) {
-			        j = Math.floor(Math.random() * (i + 1));
-			        x = a[i];
-			        a[i] = a[j];
-			        a[j] = x;
-			    }
-			    return a;
-			}
+            /**
+             * Shuffles array in place.
+             * @param {Array} a items An array containing the items.
+             */
+            function shuffle(a) {
+                var j, x, i;
+                for (i = a.length - 1; i > 0; i--) {
+                    j = Math.floor(Math.random() * (i + 1));
+                    x = a[i];
+                    a[i] = a[j];
+                    a[j] = x;
+                }
+                return a;
+            }
 
-			// Warn if overriding existing method
-			if(Array.prototype.equals)
-			    console.warn("Overriding existing Array.prototype.equals. Possible causes: New API defines the method, there's a framework conflict or you've got double inclusions in your code.");
+            // Warn if overriding existing method
+            if(Array.prototype.equals)
+                console.warn("Overriding existing Array.prototype.equals. Possible causes: New API defines the method, there's a framework conflict or you've got double inclusions in your code.");
 
-			// attach the .equals method to Array's prototype to call it on any array
-			Array.prototype.equals = function (array) {
-			    // if the other array is a falsy value, return
-			    if (!array)
-			        return false;
+            // attach the .equals method to Array's prototype to call it on any array
+            Array.prototype.equals = function (array) {
+                // if the other array is a falsy value, return
+                if (!array)
+                    return false;
 
-			    // compare lengths - can save a lot of time 
-			    if (this.length != array.length)
-			        return false;
+                // compare lengths - can save a lot of time
+                if (this.length != array.length)
+                    return false;
 
-			    for (var i = 0, l=this.length; i < l; i++) {
-			        // Check if we have nested arrays
-			        if (this[i] instanceof Array && array[i] instanceof Array) {
-			            // recurse into the nested arrays
-			            if (!this[i].equals(array[i]))
-			                return false;       
-			        }           
-			        else if (this[i] != array[i]) { 
-			            // Warning - two different object instances will never be equal: {x:20} != {x:20}
-			            return false;   
-			        }           
-			    }       
-			    return true;
-			}
+                for (var i = 0, l=this.length; i < l; i++) {
+                    // Check if we have nested arrays
+                    if (this[i] instanceof Array && array[i] instanceof Array) {
+                        // recurse into the nested arrays
+                        if (!this[i].equals(array[i]))
+                            return false;
+                    }
+                    else if (this[i] != array[i]) {
+                        // Warning - two different object instances will never be equal: {x:20} != {x:20}
+                        return false;
+                    }
+                }
+                return true;
+            }
 
-			// Hide method from for-in loops
-			Object.defineProperty(Array.prototype, "equals", {enumerable: false});
+            // Hide method from for-in loops
+            Object.defineProperty(Array.prototype, "equals", {enumerable: false});
 
-			var counter = 1;
-			var items = ['1', '2', '3', '4', '5', '6', '7', '8', '9', '10', '11', '12', '13', '14', '15', ''];
-			var result = [];
-			var shuffleArray = shuffle(items.slice(0));
+            var counter = 1;
+            var items = ['1', '2', '3', '4', '5', '6', '7', '8', '9', '10', '11', '12', '13', '14', '15', ''];
+            var result = [];
+            var shuffleArray = shuffle(items.slice(0));
 
-			for (var i = 0; i < 16; i++) {
-				if (counter == 5) {
-					counter = 1;
-				}
+            for (var i = 0; i < 16; i++) {
+                if (counter == 5) {
+                    counter = 1;
+                }
 
-				$('.game').append('<div class="item-container"><span class="item" data-row="' + (Math.floor(i/4) + 1) + '" data-col="' + counter + '">' + shuffleArray[i] + '</span></div>');
-				counter++;
-			}
+                $('.game').append('<div class="item-container"><span class="item" data-row="' + (Math.floor(i/4) + 1) + '" data-col="' + counter + '">' + shuffleArray[i] + '</span></div>');
+                counter++;
+            }
 
-			$('.item').on('click', function() {
-				var $this = $(this);
-				var $items = $('.item');
-				var item = $this.text();
-				var row = $this.data('row');
-				var col = $this.data('col');
+            $('.item').on('click', function() {
+                var $this = $(this);
+                var $items = $('.item');
+                var item = $this.text();
+                var row = $this.data('row');
+                var col = $this.data('col');
 
-				result = [];
+                result = [];
 
-				for (var i = 0; i < $items.length; i++) {
-					var $itemValue = $($items[i]);
-					var itemRow = $itemValue.data('row');
-					var itemCol = $itemValue.data('col');
+                for (var i = 0; i < $items.length; i++) {
+                    var $itemValue = $($items[i]);
+                    var itemRow = $itemValue.data('row');
+                    var itemCol = $itemValue.data('col');
 
-					if ($itemValue.text() == '' &&
-						((itemRow == row && Math.abs(itemCol - col) == 1) ||
-							(itemCol == col && Math.abs(itemRow - row) == 1))) {
-						$itemValue.text(item);
-						$this.empty();
-					}
-				}
+                    if ($itemValue.text() == '' &&
+                        ((itemRow == row && Math.abs(itemCol - col) == 1) ||
+                            (itemCol == col && Math.abs(itemRow - row) == 1))) {
+                        $itemValue.text(item);
+                        $this.empty();
+                    }
+                }
 
-				for (var i = 0; i < $items.length; i++) {
-					result.push($($items[i]).text());
-				}
+                for (var i = 0; i < $items.length; i++) {
+                    result.push($($items[i]).text());
+                }
 
-				if (items.equals(result)) {
-					alert('Good job!');
-				}
-			});
+                if (items.equals(result)) {
+                    alert('Good job!');
+                }
+            });
 
-			$('.restart').on('click', function() {
-				result = [];
-				totalSeconds = 0;
-				shuffleArray = shuffle(items.slice(0));
+            $('.restart').on('click', function() {
+                result = [];
+                totalSeconds = 0;
+                shuffleArray = shuffle(items.slice(0));
 
-				for (var i = 0; i < 16; i++) {
-					$('.item').each(function (i) {
-						$(this).text(shuffleArray[i]);
-					});
-				}
-			});
-
+                for (var i = 0; i < 16; i++) {
+                    $('.item').each(function (i) {
+                        $(this).text(shuffleArray[i]);
+                    });
+                }
+            });
 
 
-			setInterval(setTime, 1000);
 
-			function setTime() {
-			  ++totalSeconds;
-			  secondsLabel.innerHTML = pad(totalSeconds % 60);
-			  minutesLabel.innerHTML = pad(parseInt(totalSeconds / 60));
-			}
+            setInterval(setTime, 1000);
 
-			function pad(val) {
-			  var valString = val + '';
+            function setTime() {
+              ++totalSeconds;
+              secondsLabel.innerHTML = pad(totalSeconds % 60);
+              minutesLabel.innerHTML = pad(parseInt(totalSeconds / 60)); 
+            }
 
-			  if (valString.length < 2) {
-			    return '0' + valString;
-			  } else {
-			    return valString;
-			  }
-			}
+            function pad(val) {
+              var valString = val + '';
 
-		</script>
-	</body>
+              if (valString.length < 2) {
+                return '0' + valString;
+              } else {
+                return valString;
+              }
+            }
+
+        </script>
+    </body>
 </html>
